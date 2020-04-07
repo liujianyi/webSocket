@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webSocket</title>
+   
+</head>
+<body>
+    <input type="text" id="message" value="">
+    <button id="sendBtn">发送</button>
+    <div id="serverMessage"></div>
+    <script>
+  
+        //实例化一个webSocket 对象
+        var webSocket = new WebSocket('ws://localhost:3000') ;
+        //打开websocket连接
+        webSocket.onopen=function(){
+            console.log("webSocket open");
+            document.getElementById("serverMessage").innerHTML = "恭喜你连接上了"
+        }
+        //关闭websocket连接
+        webSocket.onclose = function(){
+            console.log("webSocket close");
+        }
+        //服务器返回数据
+        webSocket.onmessage = function(e){
+            //数据存放在e.data中
+           console.log(e.data)
+           var data=JSON.parse(e.data)
+           add(data.data,data.type)
+           //document.getElementById("serverMessage").innerHTML = e.data;
+        
+        }
+        //浏览器发送数据
+        document.getElementById("sendBtn").onclick = function(){
+            //获取数据
+               var txt = document.getElementById('message').value;
+               //发送数据 webSocket.send()
+             if(txt){
+                webSocket.send(txt);
+             }else{
+                 alert("你什么也没写哦11")
+             }
+              // document.getElementById("serverMessage").innerHTML = txt;
+        }
+        function add(str,type){
+            var divs= document.getElementById("serverMessage");
+            // divs.innerHTML="恭喜你连接上了"
+            var  p=document.createElement('p')
+                 p.innerHTML=str
+            
+            if(type=="enter"){
+                p.style.color="blue";
+            }else if(type=="leave"){
+                p.style.color="red";
+            }else{
+                p.style.color="green"
+            }
+            divs.appendChild(p) 
+        }
+    </script>
+</body>
+</html>
